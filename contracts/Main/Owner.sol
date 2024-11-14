@@ -6,12 +6,30 @@ import "../Utils//Helper.sol";
 
 contract Owner is Store, Helper {
   function registerOwner(string memory name) public {
+    require(bytes(name).length > 0, "Name cannot be empty");
+    require(owners[msg.sender].timestamp == 0, "Owner already exists");
+
+    owners[msg.sender] = OwnerData({
+      timestamp: block.timestamp,
+      name: name
+    });
+    
     emit OwnerAdded(msg.sender, name);
   }
 
+  function getSelf() public view returns (OwnerData memory) {
+    require(owners[msg.sender].timestamp > 0, "Owner not found");
+    return owners[msg.sender];
+  }
+
   function requestAccess(address masterOwner) public {
-    require(requests[masterOwner].length >= 32, "This user has their request limit reached");
-    requests[masterOwner].push(msg.sender);
+    require(requests[masterOwner].length < 32, "This user has their request limit reached"); // Bug fix: limit requests to 32
+    
+    requests[masterOwner].push(RequestType({
+      name: owners[msg.sender].name,
+      timestamp: block.timestamp,
+      requester: msg.sender
+    }));
   }
 
   function grantAccess(address subOwner, string memory signature, uint256 duration) public {
@@ -30,7 +48,7 @@ contract Owner is Store, Helper {
     emit AccessGranted(subOwner, expTS, signature);
   }
 
-  function getAllRequests() public view returns (address[] memory) {
+  function getAllRequests() public view returns (RequestType[] memory) {
     return requests[msg.sender];
   }
 

@@ -19,15 +19,15 @@ const config: HardhatUserConfig = {
     artifacts: "./.hardhat/artifacts",
   },
   networks: {
-    "skale-test": {
-      chainId: 974399131,
+    "opbnb-test": {
+      chainId: 5611,
       accounts: [ETH_ACCOUNT_PRIVATE_KEY],
-      url: "https://testnet.skalenodes.com/v1/giant-half-dual-testnet",
+      url: "https://opbnb-testnet-rpc.bnbchain.org/", // OR https://opbnb-testnet-rpc.publicnode.com
     },
-    "kcc-main": {
-      chainId: 321,
+    "opbnb-main": {
+      chainId: 204,
       accounts: [ETH_ACCOUNT_PRIVATE_KEY],
-      url: "https://rpc-mainnet.kcc.network",
+      url: "https://opbnb-mainnet-rpc.bnbchain.org", // OR https://opbnb-rpc.publicnode.com
     },
   }
 };

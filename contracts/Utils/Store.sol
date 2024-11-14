@@ -2,7 +2,7 @@
 pragma solidity ^0.8.27;
 
 contract Store {
-  struct Evidence {
+  struct EvidenceData { // Resolve naming conflict with Evidence contract
     uint256 timestamp;
     bytes32 dataHash;
     uint256 blockId;
@@ -16,10 +16,22 @@ contract Store {
     address masterOwner;
   }
 
+  struct RequestType {
+    address requester;
+    uint256 timestamp;
+    string name;
+  }
+
+  struct OwnerData {
+    uint256 timestamp;
+    string name;
+  }
+
   uint256 internal _evId = 0; // Auto-Incrementing EvidenceId
+  mapping(address => OwnerData) public owners; // Owner => OwnerData
   mapping(address => AccessPolicy) internal acl; // SubOwner => Expiration-TimeStamp
-  mapping(address => address[]) internal requests; // MasterOwner => SubOwners (max 10)
-  mapping(address => mapping(uint256 => Evidence)) public evidences; // Owner => (EvidenceId => Evidence)
+  mapping(address => RequestType[]) internal requests; // MasterOwner => SubOwners (max 10)
+  mapping(address => mapping(uint256 => EvidenceData)) public evidences; // Owner => (EvidenceId => Evidence)
 
   event EvidenceStored(
     address indexed owner,

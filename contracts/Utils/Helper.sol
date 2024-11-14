@@ -12,7 +12,7 @@ contract Helper is Store {
 
   function getRequesterIndex(address requester) internal view returns (uint) {
     for (uint i = 0; i < requests[msg.sender].length; i++) {
-      if (requests[msg.sender][i] == requester) {
+      if (requests[msg.sender][i].requester == requester) {
         return i; // Return the index directly
       }
     }
