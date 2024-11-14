@@ -4,10 +4,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "compile": "hardhat compile && tsx ./abi-gen.ts",
     "deploy": "hardhat ignition deploy",
-    "dev": "tsx ./app/main.ts",
     "vars-set": "hardhat vars set",
-    "compile": "hardhat compile",
+    "dev": "tsx ./app/main.ts",
     "c": "node cs.js"
   },
   "keywords": [],
@@ -41,6 +41,7 @@
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.36.0",
     "hardhat": "^2.22.15",
+    "node-json-db": "^2.3.0",
     "pg": "^8.13.1",
     "viem": "^2.21.40"
   }

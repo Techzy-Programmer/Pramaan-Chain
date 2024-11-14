@@ -4,6 +4,7 @@ import { waitForEnter } from "../utils/general.js";
 import { Command } from "@cliffy/command";
 import { Input } from "@cliffy/prompt";
 import { Table } from "@cliffy/table";
+import { db } from "../utils/db.js";
 import { Buffer } from "buffer";
 
 export const setupCmd = new Command()
@@ -13,6 +14,11 @@ export const setupCmd = new Command()
   .action(setupAccount);
 
 async function setupAccount({ name }: { name?: string }) {
+  if (await db.exists("/account")) {
+    pwarn("Account already exists in local DB.");
+    return;
+  }
+
   if (!name) {
     name = await Input.prompt({
       message: "Enter your name as legal entity",
@@ -47,5 +53,22 @@ async function setupAccount({ name }: { name?: string }) {
   plog();
   plog(`Your corresponding public address is: ${paint.c.bold(account.address)}`);
   plog(`Head over to KuCoin blockchain network to check your account activities: ${paint.b.underline(`https://scan.kcc.io/address/${account.address}`)}`);
-  Buffer.from(account.getHdKey().privateKey!).toString("hex"); // ToDo: Save to local data store.
+  const privKey = Buffer.from(account.getHdKey().privateKey!).toString("hex");
+
+  plog("\nPlease fund your account with some KCC tokens to register your account on Pramaan-Chain network.");
+  plog("Once funded, hit enter to continue....");
+  await waitForEnter();
+
+  await db.push("/account", {
+    address: account.address,
+    privKey,
+    name,
+  })
+
+  const { pchContract } = await import("../contract/init.js");
+  const tx = await pchContract.write.registerOwner([name]);
+
+  plog("Account registered successfully.", {
+    hash: tx,
+  });
 }

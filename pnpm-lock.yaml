@@ -29,6 +29,9 @@ importers:
       hardhat:
         specifier: ^2.22.15
         version: 2.22.15(ts-node@10.9.2(@types/node@22.8.7)(typescript@5.0.4))(typescript@5.0.4)
+      node-json-db:
+        specifier: ^2.3.0
+        version: 2.3.0
       pg:
         specifier: ^8.13.1
         version: 8.13.1
@@ -2061,6 +2064,9 @@ packages:
     resolution: {integrity: sha512-IRUxE4BVsHWXkV/SFOut4qTlagw2aM8T5/vnTsmrHJvVoKueJHRc/JaFND7QDDc61kLYUJ6qlZM3sqTSyx2dTw==}
     hasBin: true
 
+  node-json-db@2.3.0:
+    resolution: {integrity: sha512-B8T+w4q6zXZ20YcfQINLSjMGgImRKzkvR0ShYYoNRdLxtMhVvbzaMBzNdEaRcCjilW/lKS+g9CwVXNoK5uTncw==}
+
   nofilter@3.1.0:
     resolution: {integrity: sha512-l2NNj07e9afPnhAhvgVrCD/oy2Ai1yfLpuo3EpiO1jFTsB4sFz6oIfAfSZyQzVpkZQ9xS8ZS5g1jCBgq4Hwo0g==}
     engines: {node: '>=12.19'}
@@ -2336,6 +2342,9 @@ packages:
 
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
+
+  rwlock@5.0.0:
+    resolution: {integrity: sha512-XgzRqLMfCcm9QfZuPav9cV3Xin5TRcIlp4X/SH3CvB+x5D2AakdlEepfJKDd8ByncvfpcxNWdRZVUl38PS6ZJg==}
 
   safe-buffer@5.1.2:
     resolution: {integrity: sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==}
@@ -4871,6 +4880,10 @@ snapshots:
 
   node-gyp-build@4.8.2: {}
 
+  node-json-db@2.3.0:
+    dependencies:
+      rwlock: 5.0.0
+
   nofilter@3.1.0: {}
 
   nopt@3.0.6:
@@ -5130,6 +5143,8 @@ snapshots:
   run-parallel@1.2.0:
     dependencies:
       queue-microtask: 1.2.3
+
+  rwlock@5.0.0: {}
 
   safe-buffer@5.1.2: {}
 

@@ -20,7 +20,7 @@ export function pdim(msg: string) {
   console.log(colors.dim(msg));
 }
 
-export function plog(...msg: string[]) {
+export function plog(...msg: unknown[]) {
   console.log(...msg);
 }
 
