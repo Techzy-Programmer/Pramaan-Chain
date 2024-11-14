@@ -10,7 +10,7 @@ const mainCmd = new Command()
   .name("pch")
   .version(APP_VERSION)
   .usage("[command] [options]")
-  .description("Owner CLI for Pramaan-Chain for preserving digital evidence.");
+  .description("Pramaan-Chain Owner CLI for preserving digital evidences.");
 
 mainCmd
   .command("setup-account", setupCmd)

@@ -1,6 +1,7 @@
 import { english, generateMnemonic, mnemonicToAccount } from "viem/accounts";
-import { paint, pdim, plog, pok, pwarn } from "../utils/paint.js";
+import { paint, pdim, perror, plog, pok, pwarn } from "../utils/paint.js";
 import { waitForEnter } from "../utils/general.js";
+import { sendRequest } from "../utils/request.js";
 import { Command } from "@cliffy/command";
 import { Input } from "@cliffy/prompt";
 import { Table } from "@cliffy/table";
@@ -31,14 +32,14 @@ async function setupAccount({ name }: { name?: string }) {
   const mnemonic = generateMnemonic(english);
   const account = mnemonicToAccount(mnemonic);
 
-  pwarn("You are about to peep at your account 12-word secret recovery phrase.");
+  pwarn("You are about to peep at your account 12-words secret recovery phrase.");
   pdim("Please ensure no one is looking at your screen.");
   plog("Hit enter to continue....");
   await waitForEnter();
 
   const mnemonicWords = mnemonic.split(" ")
     .map((word, index) => paint.c.underline.bold(word) + "\n" + paint.w.italic.dim(`${(index + 1)}`));
-  pok("Please note down the following 12-word secret recovery phrase in same order as displayed and keep it private & safe.");
+  pok("Please note down the following 12-words secret recovery phrase in same order as displayed and keep it private & safe.");
   pwarn("You will lose access to all your evidence data and account if you lose this recovery phrase.\n");
 
   new Table(
@@ -52,11 +53,11 @@ async function setupAccount({ name }: { name?: string }) {
 
   plog();
   plog(`Your corresponding public address is: ${paint.c.bold(account.address)}`);
-  plog(`Head over to KuCoin blockchain network to check your account activities: ${paint.b.underline(`https://scan.kcc.io/address/${account.address}`)}`);
+  plog(`Head over to KuCoin blockchain network to check your account activities: ${paint.b.underline(`https://opbnb.bscscan.com/address/${account.address}`)}`);
   const privKey = Buffer.from(account.getHdKey().privateKey!).toString("hex");
 
-  plog("\nPlease fund your account with some KCC tokens to register your account on Pramaan-Chain network.");
-  plog("Once funded, hit enter to continue....");
+  plog("\nPlease fund your account with at least 0.001 BNB token and bridge to opBNB to successfully register your account.");
+  plog("Once funded and bridged, hit enter to continue....");
   await waitForEnter();
 
   await db.push("/account", {
@@ -68,7 +69,22 @@ async function setupAccount({ name }: { name?: string }) {
   const { pchContract } = await import("../contract/init.js");
   const tx = await pchContract.write.registerOwner([name]);
 
-  plog("Account registered successfully.", {
-    hash: tx,
+  const resp = await sendRequest("/owner/create", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name,
+      tx,
+    }),
   });
+
+  if (!resp.ok) {
+    perror("Failed to register account on Pramaan-Chain network.");
+    pwarn("[RESPONSE]: " + resp.error);
+    return;
+  }
+
+  pok(resp.message + `\nBlockchain Txn > https://opbnb.bscscan.com/tx/${tx}`);
 }
