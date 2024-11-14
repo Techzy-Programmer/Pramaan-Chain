@@ -2,10 +2,12 @@
   "compilerOptions": {
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
+    "noUnusedParameters": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "noUnusedLocals": true,
     "module": "NodeNext",
     "skipLibCheck": true,
     "target": "ESNext",

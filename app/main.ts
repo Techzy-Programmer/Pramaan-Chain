@@ -1,12 +1,13 @@
 import { Command } from "@cliffy/command";
-import { colors } from "@cliffy/ansi/colors";
 import { setupCmd } from "./cli/setup.js";
+import { init } from "./utils/general.js";
+import { APP_VERSION } from "./utils/vars.js";
 
-console.log(colors.brightMagenta.bold("Pramaan-Chain"))
+init();
 
 const mainCmd = new Command()
   .name("pch")
-  .version("0.1.0")
+  .version(APP_VERSION)
   .usage("[command] [options]")
   .description("Owner CLI for Pramaan-Chain for preserving digital evidence.");
 

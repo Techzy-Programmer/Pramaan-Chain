@@ -17,6 +17,9 @@ importers:
       '@cliffy/prompt':
         specifier: npm:@jsr/cliffy__prompt@1.0.0-rc.7
         version: '@jsr/cliffy__prompt@1.0.0-rc.7'
+      '@cliffy/table':
+        specifier: npm:@jsr/cliffy__table@1.0.0-rc.7
+        version: '@jsr/cliffy__table@1.0.0-rc.7'
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
