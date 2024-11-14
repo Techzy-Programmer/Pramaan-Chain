@@ -1,5 +1,6 @@
 import { Command } from "@cliffy/command";
 import { setupCmd } from "./cli/setup.js";
+import { recoverCmd } from "./cli/recover.js";
 import { init } from "./utils/general.js";
 import { APP_VERSION } from "./utils/vars.js";
 
@@ -12,8 +13,9 @@ const mainCmd = new Command()
   .description("Owner CLI for Pramaan-Chain for preserving digital evidence.");
 
 mainCmd
-  .command("setup-account", setupCmd);
+  .command("setup-account", setupCmd)
+  .command("recover-account", recoverCmd);
 
-process.argv.shift()
-process.argv.shift()
+process.argv.shift();
+process.argv.shift();
 mainCmd.parse(process.argv);
