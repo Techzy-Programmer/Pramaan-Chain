@@ -2,6 +2,8 @@ import os from "os";
 import path from "node:path";
 import readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
+import { BaseError, ContractFunctionRevertedError } from "viem";
+import { paint, perror, plog } from "./paint.js";
 import { mkdirSync, statSync } from "node:fs";
 import { colors } from "@cliffy/ansi/colors";
 import { APP_NAME } from "./vars.js";
@@ -19,6 +21,15 @@ export function init() {
   } catch {
     mkdirSync(dataDir);
   }
+}
+
+export async function gci() { // get contract instance
+  const { getInstance, signMessage } = await import('../contract/init.js');
+
+  return ({
+    client: await getInstance(),
+    sig: signMessage
+  })
 }
 
 export async function waitForEnter() {
@@ -47,4 +58,23 @@ export function getAppDataDir(appName: string): string {
   }
 
   return path.join(appDataPath, appName);
+}
+
+export function handleNExit(err: unknown): never {
+  if (!(err instanceof BaseError)) {
+    perror("An unexpected error occurred!");
+    process.exit(1);
+  }
+
+  const revertError = err.walk(err => err instanceof ContractFunctionRevertedError);
+  if (!(revertError instanceof ContractFunctionRevertedError)) {
+    perror(err.message);
+    process.exit(1);
+  }
+
+  const { shortMessage, name } = revertError;
+
+  plog(`${paint.r(`Error (${name}):`)}
+  ${paint.r.bold(shortMessage.replace(/\n/g, "\n  "))}\n`);
+  process.exit(1);
 }

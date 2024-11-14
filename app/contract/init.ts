@@ -7,12 +7,6 @@ import { abi } from "../abi.js";
 const IS_PROD = false;
 const CONTRACT_ADDRESS = "0x519C71569241F25317f9C6fdfA6DB61587fe855B";
 
-const pchWallet = createWalletClient({
-  chain: IS_PROD ? opBNB : opBNBTestnet,
-  account: await geAccount(),
-  transport: http()
-}).extend(publicActions);
-
 async function geAccount() {
   if (!await db.exists("/account")) {
     throw new Error("No account found in local DB.");
@@ -22,12 +16,25 @@ async function geAccount() {
   return privateKeyToAccount(`0x${acc.privKey}`);
 }
 
-export const pchContract = getContract({
-  address: CONTRACT_ADDRESS,
-  client: pchWallet,
-  abi
-});
+async function getWalletClient() {
+  return createWalletClient({
+    chain: IS_PROD ? opBNB : opBNBTestnet,
+    account: await geAccount(),
+    transport: http()
+  }).extend(publicActions);
+}
 
-export function signMessage(msg: string) {
-  return pchWallet.signMessage({ message: msg });
+export async function getInstance() {
+  return getContract({
+    client: await getWalletClient(),
+    address: CONTRACT_ADDRESS,
+    abi
+  });
+};
+
+export async function signMessage(msg: string) {
+  return (
+    (await getWalletClient())
+      .signMessage({ message: msg })
+  );
 }
