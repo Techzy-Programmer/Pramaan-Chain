@@ -5,6 +5,8 @@ import { init } from "./utils/general.js";
 import { APP_VERSION } from "./utils/vars.js";
 import { requestCmd } from "./cli/request.js";
 import { checkAccessCmd } from "./cli/check-access.js";
+import { downloadCmd } from "./cli/download.js";
+import { uploadCmd } from "./cli/upload.js";
 
 init();
 
@@ -18,7 +20,9 @@ mainCmd
   .command("setup-account", setupCmd)
   .command("recover-account", recoverCmd)
   .command("requests", requestCmd)
-  .command("check-access", checkAccessCmd);
+  .command("check-access", checkAccessCmd)
+  .command("download-evidence", downloadCmd)
+  .command("upload-evidence", uploadCmd);
 
 process.argv.shift();
 process.argv.shift();
