@@ -4,8 +4,7 @@ import { sendRequest } from "../utils/request.js";
 import { pwarn, pinfo, perror } from "../utils/paint.js";
 
 export const downloadCmd = new Command()
-  .name("download-evidence")
-  .alias("dwn")
+  .name("download").alias("dl")
   .option("-a, --address <val:string>", "Your account's Public address.")
   .option(
     "-e, --evidenceHash <val:string>",

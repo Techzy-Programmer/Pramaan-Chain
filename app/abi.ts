@@ -47,6 +47,12 @@ export const abi = [
       },
       {
         "indexed": false,
+        "internalType": "uint256",
+        "name": "size",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
         "internalType": "string",
         "name": "name",
         "type": "string"
@@ -103,6 +109,11 @@ export const abi = [
         "internalType": "string",
         "name": "dataHash",
         "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "size",
+        "type": "uint256"
       },
       {
         "internalType": "string",
@@ -165,6 +176,11 @@ export const abi = [
             "type": "string"
           },
           {
+            "internalType": "uint256",
+            "name": "size",
+            "type": "uint256"
+          },
+          {
             "internalType": "string",
             "name": "name",
             "type": "string"
@@ -204,6 +220,11 @@ export const abi = [
             "internalType": "string",
             "name": "dataHash",
             "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "size",
+            "type": "uint256"
           },
           {
             "internalType": "string",
@@ -277,6 +298,11 @@ export const abi = [
             "type": "string"
           },
           {
+            "internalType": "uint256",
+            "name": "size",
+            "type": "uint256"
+          },
+          {
             "internalType": "string",
             "name": "name",
             "type": "string"
@@ -323,6 +349,11 @@ export const abi = [
             "type": "string"
           },
           {
+            "internalType": "uint256",
+            "name": "size",
+            "type": "uint256"
+          },
+          {
             "internalType": "string",
             "name": "name",
             "type": "string"
@@ -331,6 +362,19 @@ export const abi = [
         "internalType": "struct Store.EvidenceData",
         "name": "",
         "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getEvidenceIndex",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -463,16 +507,15 @@ export const abi = [
         "internalType": "string",
         "name": "ext",
         "type": "string"
-      }
-    ],
-    "name": "storeEvidence",
-    "outputs": [
+      },
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "size",
         "type": "uint256"
       }
     ],
+    "name": "storeEvidence",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   }

@@ -7,6 +7,7 @@ import { requestCmd } from "./cli/request.js";
 import { checkAccessCmd } from "./cli/check-access.js";
 import { downloadCmd } from "./cli/download.js";
 import { uploadCmd } from "./cli/upload.js";
+import { listEvidenceCmd } from "./cli/list.js";
 
 init();
 
@@ -22,7 +23,8 @@ mainCmd
   .command("requests", requestCmd)
   .command("check-access", checkAccessCmd)
   .command("download-evidence", downloadCmd)
-  .command("upload-evidence", uploadCmd);
+  .command("upload-evidence", uploadCmd)
+  .command("list-evidence", listEvidenceCmd);
 
 process.argv.shift();
 process.argv.shift();

@@ -78,3 +78,14 @@ export function handleNExit(err: unknown): never {
   ${paint.r.bold(shortMessage.replace(/\n/g, "\n  "))}\n`);
   process.exit(1);
 }
+
+export function formatBytes(bytes: number | bigint) {
+  if (bytes === 0) return '0 B';
+
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+  const i = Math.floor(Math.log(Number(bytes)) / Math.log(k));
+  const formattedSize = parseFloat((Number(bytes) / Math.pow(k, i)).toFixed(2));
+
+  return `${formattedSize} ${sizes[i]}`;
+}

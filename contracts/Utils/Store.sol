@@ -6,6 +6,7 @@ contract Store {
     uint256 timestamp;
     string extension;
     string dataHash;
+    uint256 size;
     string name;
   }
 
@@ -38,6 +39,7 @@ contract Store {
     address indexed owner,
     uint256 timestamp,
     string dataHash,
+    uint256 size,
     string name
   );
 
