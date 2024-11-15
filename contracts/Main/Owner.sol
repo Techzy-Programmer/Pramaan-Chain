@@ -39,13 +39,10 @@ contract Owner is Store, Helper {
     }));
   }
 
-  function grantAccess(address subOwner, string memory signature, uint256 duration) public {
+  function grantAccess(address subOwner, string memory signature, uint256 expTS) public {
     require(hasRequested[subOwner][msg.sender] == true, "You have not received a request from this user");
-    require(block.timestamp + duration > block.timestamp, "Duration value overflew");
-    require(duration > 0, "Duration must be greater than zero");
+    require(expTS > block.timestamp, "Expiration time must be in the future");
     removeFromRequests(subOwner);
-
-    uint256 expTS = block.timestamp + duration;
 
     acl[subOwner] = AccessPolicy({
       metaSignature: signature,

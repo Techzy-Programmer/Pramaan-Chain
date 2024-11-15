@@ -71,12 +71,14 @@ async function grantRequest({ pubKey, duration }: { pubKey?: string; duration?: 
   }
 
   let tx: `0x${string}`;
+  const tsNow = await client.read.getTimestamp();
+  const expiryTs = tsNow + BigInt(duration);
 
   try {
     tx = await client.write.grantAccess([
       pubKey as `0x${string}`,
-      await sig(`${duration}`),
-      BigInt(duration)
+      await sig(`${expiryTs}`),
+      BigInt(expiryTs)
     ]);
   } catch (err) {
     handleNExit(err);
@@ -86,7 +88,7 @@ async function grantRequest({ pubKey, duration }: { pubKey?: string; duration?: 
     method: "POST",
 
     body: JSON.stringify({
-      msg: duration.toString(),
+      accessTS: Number(expiryTs),
       subOwnerPubAddr: pubKey,
       tx
     })

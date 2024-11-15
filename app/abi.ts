@@ -41,14 +41,14 @@ export const abi = [
       },
       {
         "indexed": false,
-        "internalType": "bytes32",
+        "internalType": "string",
         "name": "dataHash",
-        "type": "bytes32"
+        "type": "string"
       },
       {
         "indexed": false,
         "internalType": "string",
-        "name": "s3Link",
+        "name": "name",
         "type": "string"
       }
     ],
@@ -95,24 +95,19 @@ export const abi = [
         "type": "uint256"
       },
       {
-        "internalType": "bytes32",
-        "name": "dataHash",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "blockId",
-        "type": "uint256"
-      },
-      {
         "internalType": "string",
-        "name": "s3Link",
+        "name": "extension",
         "type": "string"
       },
       {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
+        "internalType": "string",
+        "name": "dataHash",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
       }
     ],
     "stateMutability": "view",
@@ -150,6 +145,82 @@ export const abi = [
   },
   {
     "inputs": [],
+    "name": "getAllEvidence",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "timestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "extension",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "dataHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct Store.EvidenceData[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "master",
+        "type": "address"
+      }
+    ],
+    "name": "getAllEvidenceForMaster",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "timestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "extension",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "dataHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct Store.EvidenceData[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getAllRequests",
     "outputs": [
       {
@@ -173,6 +244,93 @@ export const abi = [
         "internalType": "struct Store.RequestType[]",
         "name": "",
         "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      }
+    ],
+    "name": "getEvidenceByIndex",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "timestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "extension",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "dataHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct Store.EvidenceData",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "master",
+        "type": "address"
+      }
+    ],
+    "name": "getEvidenceByIndexForMaster",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "timestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "extension",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "dataHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct Store.EvidenceData",
+        "name": "",
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",
@@ -204,6 +362,19 @@ export const abi = [
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getTimestamp",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -217,7 +388,7 @@ export const abi = [
       },
       {
         "internalType": "uint256",
-        "name": "duration",
+        "name": "expTS",
         "type": "uint256"
       }
     ],
@@ -273,6 +444,35 @@ export const abi = [
     ],
     "name": "requestAccess",
     "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "dataHash",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "ext",
+        "type": "string"
+      }
+    ],
+    "name": "storeEvidence",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   }
