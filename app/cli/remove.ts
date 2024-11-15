@@ -21,7 +21,7 @@ async function removeAccountCommand() {
   }));
 
   const selectedAddr = await Select.prompt({
-    message: "Select an account to switch to",
+    message: "Select an account to remove it",
     options
   });
 

@@ -5,7 +5,7 @@ import { db, getAccount } from "../utils/db.js";
 import { abi } from "../abi.js";
 
 const IS_PROD = false;
-const CONTRACT_ADDRESS = "0x4f09E36EF97C997598934fa50EeDf56e5588120B";
+const CONTRACT_ADDRESS = "0x30D4E662a00f97844433cE72Bae17de1dfc5f481";
 
 async function geAccount() {
   await db.reload();
