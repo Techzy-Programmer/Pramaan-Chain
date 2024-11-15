@@ -25,6 +25,7 @@
     "@types/chai-as-promised": "^7.1.6",
     "@types/mocha": ">=9.1.0",
     "@types/node": ">=18.0.0",
+    "@types/spinnies": "^0.5.3",
     "chai": "^4.2.0",
     "drizzle-kit": "^0.27.1",
     "hardhat-gas-reporter": "^1.0.8",
@@ -42,8 +43,8 @@
     "drizzle-orm": "^0.36.0",
     "hardhat": "^2.22.15",
     "node-json-db": "^2.3.0",
-    "ora": "^8.1.1",
     "pg": "^8.13.1",
+    "spinnies": "^0.5.1",
     "viem": "^2.21.40"
   }
 }

@@ -5,6 +5,7 @@ import { sendRequest } from "../utils/api-req.js";
 import { Confirm, Input } from "@cliffy/prompt";
 import { Command } from "@cliffy/command";
 import { Buffer } from "buffer";
+import Spinnies from "spinnies";
 
 export const recoverCmd = new Command()
   .name("recover-account").alias("rec")
@@ -31,9 +32,10 @@ async function recoverAccount({ recoveryPhrase }: { recoveryPhrase?: string }) {
     recoveryPhrase = words.join(" ");
   }
   
+  const spinnies = new Spinnies();
   const account = mnemonicToAccount(recoveryPhrase);
+  spinnies.add("recover", { text: "Account recovery in progress..." });
   const privKey = Buffer.from(account.getHdKey().privateKey!).toString("hex");
-
   const defIndexBackup = await getDefaultAccountIndex();
 
   const recAccI = await addAccount({
@@ -51,16 +53,19 @@ async function recoverAccount({ recoveryPhrase }: { recoveryPhrase?: string }) {
     }
   }>("/owner/retrieve");
 
+  spinnies.update("recover", { text: `Account Recovery: ${resp.ok ? paint.g("Successful") : paint.r("Failed")}` });
+  spinnies.stopAll();
+
   if (!resp.ok) {
     await removeAccount(account.address);
-    if (resp.fetchError) return pwarn("Account recovery failed");
+    if (resp.fetchError) return;
     pwarn("Account recovery failed, no account exists with provided recovery phrase. Please try again.");
     return;
   }
 
   await db.push(`/accounts[${recAccI}]/name`, resp.owner.Name);
   plog(`Blockchain registration link: ${paint.g.bold.underline(`https://opbnb.bscscan.com/tx/${resp.owner.CreationTx}`)}`);
-  plog(`Account ${paint.c.bold(account.address)} recovered successfully.\nWelcome back ${paint.c.bold(resp.owner.Name)}`);
+  plog(`Account ${paint.c.bold(account.address)} recovered successfully.\nWelcome back ${paint.c.bold(resp.owner.Name)}\n`);
 
   const wantToSwitch = await Confirm.prompt({
     message: "Would you like to switch newly recovered account as default account?",

@@ -2,7 +2,8 @@ import { Command } from "@cliffy/command";
 import { sendRequest } from "../../utils/api-req.js";
 import { gci, handleNExit } from "../../utils/general.js";
 import { Confirm, Select, Number as Num } from "@cliffy/prompt";
-import { pwarn, perror, plog, paint, pok } from "../../utils/paint.js";
+import { pwarn, perror, plog, paint, pok, pdim } from "../../utils/paint.js";
+import Spinnies from "spinnies";
 
 export const grantCmd = new Command().name("grant")
   .option("-p, --pub-key <val:string>", "Public address of the user to grant the request to")
@@ -12,17 +13,20 @@ export const grantCmd = new Command().name("grant")
 
 async function grantRequest({ pubKey, duration }: { pubKey?: string; duration?: number }) {
   const { client, sig } = await gci();
+  const spinnies = new Spinnies();
 
   if (!pubKey) {
     try {
+      spinnies.add("reqs", { text: "Fetching pending requests..." });
       const reqs = await client.read.getAllRequests();
       if (!reqs.length) {
         pwarn("No pending requests found.");
         return;
       }
-
+  
       pubKey = await askForPubKey(reqs);
     } catch (err) {
+      spinnies.stopAll();
       handleNExit(err);
     }
   }
@@ -38,7 +42,7 @@ async function grantRequest({ pubKey, duration }: { pubKey?: string; duration?: 
       min: 1
     })
   }
-
+  
   plog()
   plog("Read carefully and acknowledge to continue")
   plog(`${paint.c("You are about to grant access to all your evidence data")}
@@ -49,21 +53,25 @@ async function grantRequest({ pubKey, duration }: { pubKey?: string; duration?: 
   const confirmed = await Confirm.prompt("Are you absolutely sure to continue?")
 
   if (!confirmed) {
-    plog("Exiting...")
+    pdim("Aborting operation...")
     return;
   }
 
+  let expiryTs: bigint;
   let tx: `0x${string}`;
-  const tsNow = await client.read.getTimestamp();
-  const expiryTs = tsNow + BigInt(duration);
+  spinnies.add("grant", { text: "Granting access to the user..." });
 
   try {
+    const tsNow = await client.read.getTimestamp();
+    expiryTs = tsNow + BigInt(duration);
+
     tx = await client.write.grantAccess([
       pubKey as `0x${string}`,
       await sig(`${expiryTs}`),
       BigInt(expiryTs)
     ]);
   } catch (err) {
+    spinnies.stopAll();
     handleNExit(err);
   }
 
@@ -77,11 +85,17 @@ async function grantRequest({ pubKey, duration }: { pubKey?: string; duration?: 
     })
   });
 
+  spinnies.update("grant", {
+    text: `Access Grant: ${resp.ok ? paint.g("Successful") : paint.r("Failed")}`,
+    status: "stopped"
+  });
+
   if (!resp.ok) {
     perror(resp.error);
     return;
   }
 
+  plog();
   pok(resp.message);
 }
 

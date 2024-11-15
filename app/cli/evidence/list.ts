@@ -1,10 +1,12 @@
 import { Select } from "@cliffy/prompt";
 import { Command } from "@cliffy/command";
 import { getAccount } from "../../utils/db.js";
-import { paint, pinfo, pok } from "../../utils/paint.js";
+import { paint, plog, pwarn } from "../../utils/paint.js";
 import { downloadEvidence } from "../../utils/evidence-dl.js";
 import { formatBytes, gci, handleNExit } from "../../utils/general.js";
 import { fsPicker } from "../../utils/fs-picker.js";
+import Spinnies from "spinnies";
+import path from "path";
 
 export const listCmd = new Command()
   .name("list").alias("ls")
@@ -26,11 +28,12 @@ type ACTRL = {
 }
 
 async function listEvidence({ useAccess }: { useAccess?: boolean }) {
+  const spinnies = new Spinnies();
   const { client } = await gci();
   let actrl: ACTRL;
   
   if (useAccess) {
-    pinfo("Listing evidences you have requested access for...");
+    spinnies.add("list", { text: "Fetching evidences you have requested access for..." });
 
     try {
       const perm = await client.read.getAccessControl()
@@ -42,12 +45,16 @@ async function listEvidence({ useAccess }: { useAccess?: boolean }) {
         evidences,
       };
     } catch (e) {
+      spinnies.stopAll();
       handleNExit(e);
     }
   } else {
+    spinnies.add("list", { text: "Fetching evidences uploaded by you..." });
     const acc = await getAccount();
+
     if (!acc) {
-      console.log("No account found in local DB.");
+      spinnies.stopAll();
+      pwarn("No account found in local DB.");
       return;
     }
 
@@ -62,6 +69,7 @@ async function listEvidence({ useAccess }: { useAccess?: boolean }) {
         sig: "",
       };
     } catch (e) {
+      spinnies.stopAll();
       handleNExit(e);
     }
   }
@@ -71,6 +79,7 @@ async function listEvidence({ useAccess }: { useAccess?: boolean }) {
     return;
   }
 
+  spinnies.update("list", { text: "Evidences fetch successful.", status: "succeed" });
   const { dataHash, name, extension } = await renderEvidences(actrl);
 
   const dlPth = await fsPicker({
@@ -78,9 +87,9 @@ async function listEvidence({ useAccess }: { useAccess?: boolean }) {
     onlyDirs: true
   })
 
-  console.log("\nDownloading...");
-  await downloadEvidence(actrl.owner, dataHash, `${dlPth}/${name}${extension}`, actrl.sig);
-  pok("Download complete.");
+  const fpath = path.join(dlPth, name + extension);
+  await downloadEvidence(actrl.owner, dataHash, fpath, actrl.sig);
+  plog(`\nEvidence download complete\n  Stored At > ${paint.g.bold(`${fpath}`)}`);
 }
 
 async function renderEvidences(actrl: ACTRL) {

@@ -7,6 +7,7 @@ import { Confirm, Input } from "@cliffy/prompt";
 import { Command } from "@cliffy/command";
 import { Table } from "@cliffy/table";
 import { Buffer } from "buffer";
+import Spinnies from "spinnies";
 
 export const setupCmd = new Command()
   .name("setup-account").alias("set")
@@ -62,7 +63,10 @@ async function setupAccount({ name }: { name?: string }) {
   plog("Once funded and bridged, hit enter to continue....");
   await waitForEnter();
 
-  addAccount({
+  const spinnies = new Spinnies();
+  spinnies.add("register", { text: "Account registration in progress..." });
+
+  await addAccount({
     address: account.address,
     privKey,
     name,
@@ -87,6 +91,9 @@ async function setupAccount({ name }: { name?: string }) {
       tx,
     }),
   });
+
+  spinnies.update("register", { text: `Account Registration: ${resp.ok ? paint.g("Successful") : paint.r("Failed")}` });
+  spinnies.stopAll();
 
   if (!resp.ok) {
     perror("Failed to register account on Pramaan-Chain network.");
