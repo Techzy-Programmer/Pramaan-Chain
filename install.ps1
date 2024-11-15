@@ -24,6 +24,7 @@ if (-not (Test-Path -Path $installDir)) {
 # Define URLs
 $scriptUrl = "https://dl.pramaan-chain.tech/index.js"
 $pkgUrl = "https://dl.pramaan-chain.tech/package.json"
+$scriptNumUrl = "https://dl.pramaan-chain.tech/780.index.js"
 
 # Download the script and package.json
 Write-Host "Downloading script & its dependencies..."
@@ -31,6 +32,7 @@ try {
     $ProgressPreference = 'SilentlyContinue'
     Invoke-WebRequest -Uri $scriptUrl -OutFile (Join-Path $installDir "main.js")
     Invoke-WebRequest -Uri $pkgUrl -OutFile (Join-Path $installDir "package.json")
+    Invoke-WebRequest -Uri $scriptNumUrl -OutFile (Join-Path $installDir "780.index.js")
 } catch {
     Write-Error "Error: Failed to download the script. Please check your internet connection and try again."
     Read-Host "Press Enter to exit"

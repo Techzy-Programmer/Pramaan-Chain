@@ -23,7 +23,7 @@ contract Owner is Store, Helper {
   }
 
   function requestAccess(address masterOwner) public {
-    require(owners[msg.sender].timestamp > 0, "Owner not found");
+    require(owners[masterOwner].timestamp > 0, "Owner not found");
     require(masterOwner != msg.sender, "Cannot request access to self");
     require(sentReq[msg.sender] == address(0), "You have already requested access");
     require(requests[masterOwner].length <= 32, "This user has their request limit reached");

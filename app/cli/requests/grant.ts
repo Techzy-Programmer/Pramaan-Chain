@@ -19,6 +19,10 @@ async function grantRequest({ pubKey, duration }: { pubKey?: string; duration?: 
     try {
       spinnies.add("reqs", { text: "Fetching pending requests..." });
       const reqs = await client.read.getAllRequests();
+
+      spinnies.stopAll();
+      spinnies.remove("reqs");
+
       if (!reqs.length) {
         pwarn("No pending requests found.");
         return;

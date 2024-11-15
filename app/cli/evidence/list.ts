@@ -75,7 +75,10 @@ async function listEvidence({ useAccess }: { useAccess?: boolean }) {
   }
 
   if (actrl.evidences.length === 0) {
+    spinnies.stopAll();
+    spinnies.remove("list");
     console.log("No evidences found.");
+
     return;
   }
 

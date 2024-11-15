@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "package": "tsc && ncc build ./dist/app/main.js -o ./dist/_standalone",
+    "package": "tsc && ncc build ./dist/app/main.js --no-cache -o ./dist/_standalone && cp install.ps1 ./dist/_standalone/install.ps1",
     "compile": "hardhat compile && tsx ./abi-gen.ts",
     "deploy": "hardhat ignition deploy",
     "vars-set": "hardhat vars set",
@@ -29,6 +29,7 @@
     "@types/spinnies": "^0.5.3",
     "chai": "^4.2.0",
     "drizzle-kit": "^0.27.1",
+    "esbuild": "^0.24.0",
     "hardhat-gas-reporter": "^1.0.8",
     "solidity-coverage": "^0.8.0",
     "ts-node": ">=8.0.0",
