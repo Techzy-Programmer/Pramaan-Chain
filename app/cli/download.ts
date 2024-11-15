@@ -1,57 +1,78 @@
-// Download a video file
-
 import fs from "fs";
-// import { pipeline, Stream } from "stream";
 import { Command } from "@cliffy/command";
 import { sendRequest } from "../utils/request.js";
-import { pipeline, Stream } from "stream";
+import { pwarn, pinfo, perror } from "../utils/paint.js";
 
 export const downloadCmd = new Command()
   .name("download-evidence")
-  .alias("dnd")
-  .option("-b, --blobName <val:string>", "Your Blob Name.")
+  .alias("dwn")
   .option("-a, --address <val:string>", "Your account's Public address.")
-  .option("-p, --filePath <val:string>", "Your Evidence's file path")
-  .description("Upload your evidence with the Pramaan-Chain network.")
-  .action(({ blobName, filePath, address }) =>
-    downloadEvidence(blobName, filePath, address)
+  .option(
+    "-e, --evidenceHash <val:string>",
+    "The SHA-512 hash of the evidence."
+  )
+  .option(
+    "-m, --masterAddress <val:string>",
+    "The master's public address for the evidence owner."
+  )
+  .option(
+    "-o, --output <val:string>",
+    "The output file path to save the downloaded evidence."
+  )
+  .description("Download your evidence file from the Pramaan-Chain network.")
+  .action(downloadEvidence);
+
+async function downloadEvidence({
+  address,
+  evidenceHash,
+  masterAddress,
+  output,
+}: {
+  address?: string;
+  evidenceHash?: string;
+  masterAddress?: string;
+  output?: string;
+}) {
+  if (!address || !evidenceHash || !masterAddress || !output) {
+    pwarn(
+      "Public address, evidence hash, master address, and output path are required."
+    );
+    return;
+  }
+
+  console.log("Public Address:", address);
+  console.log("Evidence Hash:", evidenceHash);
+  console.log("Master Address:", masterAddress);
+  console.log("Output File Path:", output);
+  console.log(
+    evidenceHash.length !== 128 && perror("Invalid evidence hash length.")
+  );
+  console.log(evidenceHash.length);
+  const resp = await sendRequest<Blob>(
+    "/evidence/download/" + evidenceHash + "/" + masterAddress,
+    {
+      method: "GET",
+      headers: {
+        "X-Pub-Address": address,
+      },
+    }
   );
 
-async function downloadEvidence(
-  blobName?: string,
-  downloadPath?: string,
-  address?: string | undefined
-): Promise<void> {
-  try {
-    const response = await sendRequest(
-      `/evidence/download?blobName=${blobName}`,
-      {
-        headers: {
-          "X-Pub-Address": address || "",
-        },
-        method: "GET",
-      }
-    );
+  if (!resp.ok) {
+    console.log("Error: ", resp.error);
+    return;
+  }
 
-    if (response.ok) {
-      if (!downloadPath) {
-        throw new Error("Download path is not defined");
-      }
-      const destStream = fs.createWriteStream(downloadPath);
-      const readableStream = Stream.Readable.fromWeb(response.message as any);
+  // Convert Blob to ReadableStream for file writing
+  const fileStream = fs.createWriteStream(output);
 
-      pipeline(readableStream, destStream, (err) => {
-        if (err) {
-          console.error("Pipeline failed:", err);
-        } else {
-          console.log("Download complete");
-        }
-      });
-    } else {
-      const data = response.error;
-      console.log("Download failed:", data);
-    }
-  } catch (err) {
-    console.error("Error during download:", err);
+  // If the response is a Blob, convert it to a buffer and write it to the file
+  if (resp instanceof Blob) {
+    const buffer = Buffer.from(await resp.arrayBuffer());
+    fileStream.write(buffer);
+    fileStream.close();
+    pinfo("Evidence downloaded successfully to: " + output);
+  } else {
+    console.log("Unexpected response format.");
   }
 }
