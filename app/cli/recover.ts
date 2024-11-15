@@ -1,6 +1,6 @@
 import { paint, pdim, plog, pwarn } from "../utils/paint.js";
 import { english, mnemonicToAccount } from "viem/accounts";
-import { sendRequest } from "../utils/request.js";
+import { sendRequest } from "../utils/api-req.js";
 import { Command } from "@cliffy/command";
 import { Input } from "@cliffy/prompt";
 import { db } from "../utils/db.js";

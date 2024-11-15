@@ -3,12 +3,13 @@ import { db, DBAccount } from "./db.js";
 const baseUrl = 'https://api.pramaan-chain.tech';
 
 type Resp<T extends Object = {}> = 
-  | (T & { message: string; ok: true })
-  | { error: string; ok: false };
+  | { error: string; ok: false }
+  | (T & { message: string; body?: ReadableStream; ok: true })
 
 export async function sendRequest<T extends Object = {}>(
   path: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  rawBody: boolean = false
 ): Promise<Resp<T>> {
   if (!await db.exists("/account")) {
     throw new Error(
@@ -30,8 +31,17 @@ export async function sendRequest<T extends Object = {}>(
     },
   });
 
+  if (rawBody && res.ok) {
+    return {
+      ok: true,
+      ...({} as T),
+      message: res.statusText,
+      body: res.body as ReadableStream,
+    };
+  }
+
   return {
     ...(await res.json()),
     ok: res.ok,
-  };
+  }
 }

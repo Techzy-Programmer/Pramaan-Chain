@@ -1,7 +1,7 @@
 import fs from "fs";
 import { Command } from "@cliffy/command";
-import { sendRequest } from "../utils/request.js";
-import { pwarn, pinfo, perror } from "../utils/paint.js";
+import { sendRequest } from "../../utils/api-req.js";
+import { pwarn, pinfo, perror } from "../../utils/paint.js";
 
 export const downloadCmd = new Command()
   .name("download").alias("dl")

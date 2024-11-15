@@ -1,10 +1,10 @@
 import { Select } from "@cliffy/prompt";
 import { Command } from "@cliffy/command";
-import { db, DBAccount } from "../utils/db.js";
-import { paint, pinfo } from "../utils/paint.js";
-import { formatBytes, gci, handleNExit } from "../utils/general.js";
+import { db, DBAccount } from "../../utils/db.js";
+import { paint, pinfo } from "../../utils/paint.js";
+import { formatBytes, gci, handleNExit } from "../../utils/general.js";
 
-export const listEvidenceCmd = new Command()
+export const listCmd = new Command()
   .name("list").alias("ls")
   .option("-a, --use-access", "List the evidences you have requested access for.")
   .description("Upload your evidence with the Pramaan-Chain network.")

@@ -1,31 +1,14 @@
-import { paint, pdim, perror, plog, pok, pwarn } from "../utils/paint.js";
-import { Confirm, Number as Num, Select } from "@cliffy/prompt";
-import { sendRequest } from "../utils/request.js";
 import { Command } from "@cliffy/command";
-import { gci, handleNExit } from "../utils/general.js";
+import { sendRequest } from "../../utils/api-req.js";
+import { gci, handleNExit } from "../../utils/general.js";
+import { Confirm, Select, Number as Num } from "@cliffy/prompt";
+import { pwarn, perror, plog, paint, pok } from "../../utils/paint.js";
 
-const grantCmd = new Command().name("grant")
+export const grantCmd = new Command().name("grant")
   .option("-p, --pub-key <val:string>", "Public address of the user to grant the request to")
   .option("-d, --duration <val:number>", "Duration in seconds for which the access should be granted")
   .description("Grant access to your evidence data to specified user")
   .action(grantRequest);
-
-const sendCmd = new Command().name("send")
-  .option("-p, --pub-key <val:string>", "Public address of the owner to send the request to")
-  .description("Request access to evidences from specified owner")
-  .action(requestAccess);
-
-export const requestCmd = new Command()
-  .name("requests").alias("req")
-  .description("Send or Grant request to access evidence data")
-  .action(handleRequest)
-  .command("grant", grantCmd)
-  .command("send", sendCmd)
-
-async function handleRequest() {
-  pwarn("Please specify a sub-command to perform the request operation.");
-  pdim("Use -h flag to see available sub-commands.");
-}
 
 async function grantRequest({ pubKey, duration }: { pubKey?: string; duration?: number }) {
   const { client, sig } = await gci();
@@ -100,30 +83,6 @@ async function grantRequest({ pubKey, duration }: { pubKey?: string; duration?: 
   }
 
   pok(resp.message);
-}
-
-async function requestAccess({ pubKey }: { pubKey?: string }) {
-  if (!pubKey) {
-    pwarn("Please specify the public address of the owner whom you want to send the request to.");
-    return;
-  }
-
-  if (!pubKey.startsWith("0x") || pubKey.length !== 42) {
-    perror("Provided public address is invalid");
-    return;
-  }
-
-  let tx: `0x${string}`;
-  const { client } = await gci();
-
-  try {
-    tx = await client.write.requestAccess([pubKey as `0x${string}`]);
-  } catch (err) {
-    handleNExit(err);
-  }
-
-  pdim("Request sent successfully");
-  plog(`Transaction Hash on opBNB: ${paint.g.bold(tx)}`);
 }
 
 async function askForPubKey(reqs: ReqsType) {

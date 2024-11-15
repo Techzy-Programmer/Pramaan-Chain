@@ -1,7 +1,7 @@
 import { english, generateMnemonic, mnemonicToAccount } from "viem/accounts";
 import { paint, pdim, perror, plog, pok, pwarn } from "../utils/paint.js";
 import { gci, handleNExit, waitForEnter } from "../utils/general.js";
-import { sendRequest } from "../utils/request.js";
+import { sendRequest } from "../utils/api-req.js";
 import { Command } from "@cliffy/command";
 import { Input } from "@cliffy/prompt";
 import { Table } from "@cliffy/table";

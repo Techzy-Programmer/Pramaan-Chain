@@ -1,10 +1,10 @@
 import fs from "fs";
 import { Input } from "@cliffy/prompt";
 import { Command } from "@cliffy/command";
-import { hashFile } from "../utils/hash.js";
-import { sendRequest } from "../utils/request.js";
-import { plog, pok, pwarn } from "../utils/paint.js";
-import { delay, gci, handleNExit } from "../utils/general.js";
+import { hashFile } from "../../utils/hash.js";
+import { sendRequest } from "../../utils/api-req.js";
+import { plog, pok, pwarn } from "../../utils/paint.js";
+import { delay, gci, handleNExit } from "../../utils/general.js";
 
 export const uploadCmd = new Command()
   .name("upload").alias("up")

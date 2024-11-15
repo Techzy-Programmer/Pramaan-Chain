@@ -3,11 +3,9 @@ import { setupCmd } from "./cli/setup.js";
 import { recoverCmd } from "./cli/recover.js";
 import { init } from "./utils/general.js";
 import { APP_VERSION } from "./utils/vars.js";
-import { requestCmd } from "./cli/request.js";
+import { requestsCmd } from "./cli/requests/index.js";
 import { checkAccessCmd } from "./cli/check-access.js";
-import { downloadCmd } from "./cli/download.js";
-import { uploadCmd } from "./cli/upload.js";
-import { listEvidenceCmd } from "./cli/list.js";
+import { evidenceCmd } from "./cli/evidence/index.js";
 
 init();
 
@@ -20,11 +18,9 @@ const mainCmd = new Command()
 mainCmd
   .command("setup-account", setupCmd)
   .command("recover-account", recoverCmd)
-  .command("requests", requestCmd)
+  .command("requests", requestsCmd)
   .command("check-access", checkAccessCmd)
-  .command("download-evidence", downloadCmd)
-  .command("upload-evidence", uploadCmd)
-  .command("list-evidence", listEvidenceCmd);
+  .command("evidence", evidenceCmd);
 
 process.argv.shift();
 process.argv.shift();
