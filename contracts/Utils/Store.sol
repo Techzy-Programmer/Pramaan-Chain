@@ -2,12 +2,11 @@
 pragma solidity ^0.8.27;
 
 contract Store {
-  struct EvidenceData { // Resolve naming conflict with Evidence contract
+  struct EvidenceData {
     uint256 timestamp;
-    bytes32 dataHash;
-    uint256 blockId;
-    string s3Link;
-    address owner;
+    string extension;
+    string dataHash;
+    string name;
   }
 
   struct AccessPolicy {
@@ -27,17 +26,19 @@ contract Store {
     string name;
   }
 
-  uint256 internal _evId = 0; // Auto-Incrementing EvidenceId
+  mapping(address => EvidenceData[]) public evidences; // Owner => (EvidenceId => Evidence)
+
   mapping(address => OwnerData) public owners; // Owner => OwnerData
-  mapping(address => AccessPolicy) internal acl; // SubOwner => Expiration-TimeStamp
-  mapping(address => RequestType[]) internal requests; // MasterOwner => SubOwners (max 10)
-  mapping(address => mapping(uint256 => EvidenceData)) public evidences; // Owner => (EvidenceId => Evidence)
+  mapping(address => address) internal sentReq; // SubOwner => MasterOwner
+  mapping(address => AccessPolicy) internal acl; // SubOwner => Access Rule & Control
+  mapping(address => RequestType[]) internal requests; // MasterOwner => SubOwners (max 32)
+  mapping(address => mapping(address => bool)) internal hasRequested; // SubOwners => (MasterOwner => Sent?)
 
   event EvidenceStored(
     address indexed owner,
     uint256 timestamp,
-    bytes32 dataHash,
-    string s3Link
+    string dataHash,
+    string name
   );
 
   event AccessGranted(address subOwner, uint256 expirationTime, string metaSignature);
