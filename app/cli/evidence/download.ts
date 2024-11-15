@@ -4,7 +4,8 @@ import { sendRequest } from "../../utils/api-req.js";
 import { pwarn, pinfo, perror } from "../../utils/paint.js";
 
 export const downloadCmd = new Command()
-  .name("download").alias("dl")
+  .name("download")
+  .alias("dl")
   .option("-a, --address <val:string>", "Your account's Public address.")
   .option(
     "-e, --evidenceHash <val:string>",

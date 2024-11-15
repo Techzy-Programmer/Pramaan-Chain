@@ -1,3 +1,4 @@
+import { signMessage } from "../contract/init.js";
 import { getAccount } from "./db.js";
 import { perror } from "./paint.js";
 
@@ -19,7 +20,6 @@ export async function sendRequest<T extends Object = {}>(
     );
   }
 
-  const { signMessage } = await import("../contract/init.js");
   const signature = await signMessage("Authorize Me!");
   const { address } = acc;
   let res: Response;

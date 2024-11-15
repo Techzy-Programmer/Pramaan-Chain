@@ -3,6 +3,7 @@ import path from "node:path";
 import readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 import { BaseError, ContractFunctionRevertedError } from "viem";
+import { getInstance, signMessage } from "../contract/init.js";
 import { paint, perror, plog } from "./paint.js";
 import { mkdirSync, statSync } from "node:fs";
 import { colors } from "@cliffy/ansi/colors";
@@ -24,8 +25,6 @@ export function init() {
 }
 
 export async function gci() { // get contract instance
-  const { getInstance, signMessage } = await import('../contract/init.js');
-
   return ({
     client: await getInstance(),
     sig: signMessage

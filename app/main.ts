@@ -7,6 +7,7 @@ import { requestsCmd } from "./cli/requests/index.js";
 import { evidenceCmd } from "./cli/evidence/index.js";
 import { switchCmd } from "./cli/switch.js";
 import { removeCmd } from "./cli/remove.js";
+import { baseCommand } from "./base-cmd.js";
 
 init();
 
@@ -14,7 +15,8 @@ const mainCmd = new Command()
   .name("pch")
   .version(APP_VERSION)
   .usage("[command] [options]")
-  .description("Pramaan-Chain Owner CLI for preserving digital evidences.");
+  .description("Pramaan-Chain Owner CLI for securely preserving digital evidences.")
+  .action(baseCommand);
 
 mainCmd
   .command("setup-account", setupCmd)

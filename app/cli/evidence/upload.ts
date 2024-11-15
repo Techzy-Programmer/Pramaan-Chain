@@ -3,9 +3,11 @@ import { Input } from "@cliffy/prompt";
 import { Command } from "@cliffy/command";
 import { hashFile } from "../../utils/hash.js";
 import { sendRequest } from "../../utils/api-req.js";
-import { paint, plog, pwarn } from "../../utils/paint.js";
+import { paint, perror, plog, pwarn } from "../../utils/paint.js";
 import { delay, gci, handleNExit } from "../../utils/general.js";
 import { fsPicker } from "../../utils/fs-picker.js";
+import { getBalance } from "../../contract/init.js";
+import { getAccount } from "../../utils/db.js";
 import Spinnies from "spinnies";
 
 export const uploadCmd = new Command()
@@ -16,6 +18,17 @@ export const uploadCmd = new Command()
   .action(uploadEvidence);
 
 async function uploadEvidence({ filePath, name }: { filePath?: string; name?: string }) {
+  const acc = await getAccount();
+  if (!acc) {
+    pwarn("No account found. Please login to continue.");
+    return;
+  }
+
+  if (Number(await getBalance(acc.address)) < 0.0005) {
+    plog(`${paint.r.bold("Insufficient Balance Alert")} Please maintain a minimum of 0.0005 BNB to upload evidence.`);
+    return;
+  }
+
   if (!filePath) {
     filePath = await fsPicker({
       promptMessage: "Select the file you want to upload",
@@ -69,8 +82,15 @@ async function uploadEvidence({ filePath, name }: { filePath?: string; name?: st
 
   try {
     await delay(2000);
+
+    const rsp = await fetch("https://api.ipify.org/?format=json");
+    if (!rsp.ok) {
+      perror("Something's quite not right!");
+      return;
+    }
+
     index = Number(await client.read.getEvidenceIndex());
-    tx = await client.write.storeEvidence([hash, name, fileExt, BigInt(fileSize)]);
+    tx = await client.write.storeEvidence([hash, name, fileExt, BigInt(fileSize), (await rsp.json()).ip]);
 
     spinnies.update("store", {
       text: "Evidence metadata stored successfully on blockchain.\Check Txn at > " + paint.g.bold(`https://opbnb.bscscan.com/tx/${tx}`),

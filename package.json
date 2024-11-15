@@ -4,6 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "package": "tsc && ncc build ./dist/app/main.js -o ./dist/_standalone",
     "compile": "hardhat compile && tsx ./abi-gen.ts",
     "deploy": "hardhat ignition deploy",
     "vars-set": "hardhat vars set",

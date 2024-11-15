@@ -1,7 +1,7 @@
 import { english, generateMnemonic, mnemonicToAccount } from "viem/accounts";
 import { paint, pdim, perror, plog, pok, pwarn } from "../utils/paint.js";
-import { addAccount, getAccount, switchAccount } from "../utils/db.js";
 import { gci, handleNExit, waitForEnter } from "../utils/general.js";
+import { addAccount, switchAccount } from "../utils/db.js";
 import { sendRequest } from "../utils/api-req.js";
 import { Confirm, Input } from "@cliffy/prompt";
 import { Command } from "@cliffy/command";
@@ -16,11 +16,6 @@ export const setupCmd = new Command()
   .action(setupAccount);
 
 async function setupAccount({ name }: { name?: string }) {
-  if (await getAccount()) {
-    pwarn("Account already exists in local DB.");
-    return;
-  }
-
   if (!name) {
     name = await Input.prompt({
       message: "Enter your name as legal entity",

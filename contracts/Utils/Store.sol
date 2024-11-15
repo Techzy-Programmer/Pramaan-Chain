@@ -5,6 +5,7 @@ contract Store {
   struct EvidenceData {
     uint256 timestamp;
     string extension;
+    string ipAddress;
     string dataHash;
     uint256 size;
     string name;
@@ -27,7 +28,7 @@ contract Store {
     string name;
   }
 
-  mapping(address => EvidenceData[]) public evidences; // Owner => (EvidenceId => Evidence)
+  mapping(address => EvidenceData[]) public evidences; // Owner => EvidenceData
 
   mapping(address => OwnerData) public owners; // Owner => OwnerData
   mapping(address => address) internal sentReq; // SubOwner => MasterOwner
@@ -38,6 +39,7 @@ contract Store {
   event EvidenceStored(
     address indexed owner,
     uint256 timestamp,
+    string ipAddress,
     string dataHash,
     uint256 size,
     string name

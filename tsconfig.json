@@ -11,6 +11,7 @@
     "module": "NodeNext",
     "skipLibCheck": true,
     "target": "ESNext",
+    "outDir": "dist",
     "strict": true,
   }
 }

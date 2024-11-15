@@ -42,6 +42,12 @@ export const abi = [
       {
         "indexed": false,
         "internalType": "string",
+        "name": "ipAddress",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
         "name": "dataHash",
         "type": "string"
       },
@@ -103,6 +109,11 @@ export const abi = [
       {
         "internalType": "string",
         "name": "extension",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "ipAddress",
         "type": "string"
       },
       {
@@ -172,6 +183,11 @@ export const abi = [
           },
           {
             "internalType": "string",
+            "name": "ipAddress",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
             "name": "dataHash",
             "type": "string"
           },
@@ -214,6 +230,11 @@ export const abi = [
           {
             "internalType": "string",
             "name": "extension",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "ipAddress",
             "type": "string"
           },
           {
@@ -294,6 +315,11 @@ export const abi = [
           },
           {
             "internalType": "string",
+            "name": "ipAddress",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
             "name": "dataHash",
             "type": "string"
           },
@@ -341,6 +367,11 @@ export const abi = [
           {
             "internalType": "string",
             "name": "extension",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "ipAddress",
             "type": "string"
           },
           {
@@ -512,11 +543,72 @@ export const abi = [
         "internalType": "uint256",
         "name": "size",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "pubIp",
+        "type": "string"
       }
     ],
     "name": "storeEvidence",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "pubAddr",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "evidenceHash",
+        "type": "string"
+      }
+    ],
+    "name": "verifyEvidenceIntegrity",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "timestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "extension",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "ipAddress",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "dataHash",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "size",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct Store.EvidenceData",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ] as const;

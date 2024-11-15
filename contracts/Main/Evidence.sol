@@ -10,19 +10,30 @@ contract Evidence is Store {
     _;
   }
 
-  function storeEvidence(string memory dataHash, string memory name, string memory ext, uint256 size) public {
+  function storeEvidence(string memory dataHash, string memory name, string memory ext, uint256 size, string memory pubIp) public {
     require(bytes(dataHash).length == 128, "DataHash must be a 128-character hex string representing SHA-512"); // Ensure correct format
     require(bytes(name).length > 0, "Name cannot be empty");
 
     evidences[msg.sender].push(EvidenceData({
       timestamp: block.timestamp,
       dataHash: dataHash,
+      ipAddress: pubIp,
       extension: ext,
       size: size,
       name: name
     }));
 
-    emit EvidenceStored(msg.sender, block.timestamp, dataHash, size, name);
+    emit EvidenceStored(msg.sender, block.timestamp, pubIp, dataHash, size, name);
+  }
+
+  function verifyEvidenceIntegrity(address pubAddr, string memory evidenceHash) public view returns (EvidenceData memory) {
+    for (uint i = 0; i < evidences[pubAddr].length; i++) {
+      if (keccak256(abi.encodePacked(evidences[pubAddr][i].dataHash)) == keccak256(abi.encodePacked(evidenceHash))) {
+        return evidences[pubAddr][i];
+      }
+    }
+
+    revert("Evidence not found or might have been tampered with");
   }
 
   function getEvidenceIndex() public view returns (uint256) {

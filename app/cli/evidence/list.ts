@@ -36,7 +36,7 @@ async function listEvidence({ useAccess }: { useAccess?: boolean }) {
     spinnies.add("list", { text: "Fetching evidences you have requested access for..." });
 
     try {
-      const perm = await client.read.getAccessControl()
+      const perm = await client.read.getAccessControl();
       const evidences = await client.read.getAllEvidenceForMaster([perm.masterOwner]);
 
       actrl = {
@@ -84,31 +84,31 @@ async function listEvidence({ useAccess }: { useAccess?: boolean }) {
 
   const dlPth = await fsPicker({
     promptMessage: "Select a folder to download the evidence to",
-    onlyDirs: true
-  })
+    onlyDirs: true,
+  });
 
   const fpath = path.join(dlPth, name + extension);
-  await downloadEvidence(actrl.owner, dataHash, fpath, actrl.sig);
+  if (!await downloadEvidence(actrl.owner, dataHash, fpath, actrl.sig)) return;
   plog(`\nEvidence download complete\n  Stored At > ${paint.g.bold(`${fpath}`)}`);
 }
 
 async function renderEvidences(actrl: ACTRL) {
-  const prompt = actrl.evidences.map(({
-    extension,
-    timestamp,
-    dataHash,
-    name,
-    size
-  }, i) => {
-    return {
-      name: `${i + 1}. ${paint.c.bold(name + extension)} (${paint.g(formatBytes(size))}) - ${paint.w.dim(new Date(Number(`${timestamp}000`)).toLocaleString())}`,
-      value: { dataHash, name, extension }
-    };
-  });
+  const prompt = actrl.evidences.map(
+    ({ extension, timestamp, dataHash, name, size }, i) => {
+      return {
+        name: `${i + 1}. ${paint.c.bold(name + extension)} (${paint.g(
+          formatBytes(size)
+        )}) - ${paint.w.dim(
+          new Date(Number(`${timestamp}000`)).toLocaleString()
+        )}`,
+        value: { dataHash, name, extension },
+      };
+    }
+  );
 
   const selectedEv = await Select.prompt({
     message: "Select an evidence to download",
-    options: prompt
+    options: prompt,
   });
 
   return selectedEv;

@@ -58,7 +58,7 @@ export async function removeAccount(address: string) {
 }
 
 export type DBAccount = {
-  address: string;
+  address: `0x${string}`;
   privKey: string;
   name: string;
 }
