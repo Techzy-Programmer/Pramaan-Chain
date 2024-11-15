@@ -1,7 +1,8 @@
-import { Select } from "@cliffy/prompt";
 import { Command } from "@cliffy/command";
-import { db, DBAccount } from "../../utils/db.js";
+import { Input, Select } from "@cliffy/prompt";
+import { getAccount } from "../../utils/db.js";
 import { paint, pinfo } from "../../utils/paint.js";
+import { downloadEvidence } from "../../utils/evidence-dl.js";
 import { formatBytes, gci, handleNExit } from "../../utils/general.js";
 
 export const listCmd = new Command()
@@ -43,7 +44,13 @@ async function listEvidence({ useAccess }: { useAccess?: boolean }) {
       handleNExit(e);
     }
   } else {
-    const { address } = await db.getObject<DBAccount>("/account");
+    const acc = await getAccount();
+    if (!acc) {
+      console.log("No account found in local DB.");
+      return;
+    }
+
+    const { address } = acc;
 
     try {
       const evidences = await client.read.getAllEvidence();
@@ -63,8 +70,15 @@ async function listEvidence({ useAccess }: { useAccess?: boolean }) {
     return;
   }
 
-  const selectedHash = await renderEvidences(actrl);
-  console.log("\nYou Selected", selectedHash);
+  const selectedEvHash = await renderEvidences(actrl);
+  const dlPth = await Input.prompt({
+    message: "Enter the path to download the evidence",
+    minLength: 3
+  });
+
+  console.log("\nDownloading...");
+  await downloadEvidence(actrl.owner, selectedEvHash, dlPth, actrl.sig);
+  console.log("Download complete.");
 }
 
 async function renderEvidences(actrl: ACTRL) {

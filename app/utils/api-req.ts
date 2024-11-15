@@ -1,4 +1,4 @@
-import { db, DBAccount } from "./db.js";
+import { getAccount } from "./db.js";
 
 const baseUrl = 'https://api.pramaan-chain.tech';
 
@@ -11,15 +11,16 @@ export async function sendRequest<T extends Object = {}>(
   options: RequestInit = {},
   rawBody: boolean = false
 ): Promise<Resp<T>> {
-  if (!await db.exists("/account")) {
+  const acc = await getAccount();
+  if (!acc) {
     throw new Error(
       "Account not found, please setup your account using CLI. Try `pch -h` for help."
     );
   }
 
   const { signMessage } = await import("../contract/init.js");
-  const { address } = await db.getObject<DBAccount>("/account");
   const signature = await signMessage("Authorize Me!");
+  const { address } = acc;
 
   const res = await fetch(`${baseUrl}${path}`, {
     ...options,

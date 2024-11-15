@@ -4,8 +4,9 @@ import { recoverCmd } from "./cli/recover.js";
 import { init } from "./utils/general.js";
 import { APP_VERSION } from "./utils/vars.js";
 import { requestsCmd } from "./cli/requests/index.js";
-import { checkAccessCmd } from "./cli/check-access.js";
 import { evidenceCmd } from "./cli/evidence/index.js";
+import { switchCmd } from "./cli/switch.js";
+import { removeCmd } from "./cli/remove.js";
 
 init();
 
@@ -18,9 +19,10 @@ const mainCmd = new Command()
 mainCmd
   .command("setup-account", setupCmd)
   .command("recover-account", recoverCmd)
+  .command("switch-account", switchCmd)
+  .command("remove-account", removeCmd)
   .command("requests", requestsCmd)
-  .command("check-access", checkAccessCmd)
-  .command("evidence", evidenceCmd);
+  .command("evidence", evidenceCmd)
 
 process.argv.shift();
 process.argv.shift();

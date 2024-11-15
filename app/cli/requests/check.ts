@@ -1,10 +1,10 @@
-import { gci, handleNExit } from "../utils/general.js";
-import { paint, plog } from "../utils/paint.js";
+import { gci, handleNExit } from "../../utils/general.js";
+import { paint, plog } from "../../utils/paint.js";
 import { Command } from "@cliffy/command";
 
-export const checkAccessCmd = new Command()
-  .name("check-access").alias("chk")
-  .description("Checks if you have been granted access to any evidence data.")
+export const checkCmd = new Command()
+  .name("check")
+  .description("Check if you have been granted access (if requested for)")
   .action(checkAccess);
 
 async function checkAccess() {

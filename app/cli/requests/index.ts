@@ -1,5 +1,6 @@
 import { pdim, pwarn } from "../../utils/paint.js";
 import { Command } from "@cliffy/command";
+import { checkCmd } from "./check.js";
 import { grantCmd } from "./grant.js";
 import { sendCmd } from "./send.js";
 
@@ -9,6 +10,7 @@ export const requestsCmd = new Command()
   .action(handleRequests)
   .command("send", sendCmd)
   .command("grant", grantCmd)
+  .command("check", checkCmd)
 
 async function handleRequests() {
   pwarn("Please specify a sub-command to perform the request operation.");

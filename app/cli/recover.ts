@@ -2,39 +2,47 @@ import { paint, pdim, plog, pwarn } from "../utils/paint.js";
 import { english, mnemonicToAccount } from "viem/accounts";
 import { sendRequest } from "../utils/api-req.js";
 import { Command } from "@cliffy/command";
-import { Input } from "@cliffy/prompt";
-import { db } from "../utils/db.js";
+import { Confirm, Input } from "@cliffy/prompt";
+import { addAccount, db, getDefaultAccountIndex, removeAccount, switchAccount } from "../utils/db.js";
 import { Buffer } from "buffer";
 
 export const recoverCmd = new Command()
   .name("recover-account").alias("rec")
+  .option("-r, --recovery-phrase <val:string>", "Your name as legal entity.")
   .description("Recover your account using the 12-words long private recovery phrase.")
   .action(recoverAccount);
 
-async function recoverAccount() {
-  const words: string[] = [];
+async function recoverAccount({ recoveryPhrase }: { recoveryPhrase?: string }) {
+  if (!recoveryPhrase) {
+    const words: string[] = [];
 
-  for (let i = 0; i < 12; i++) {
-    pdim("Important: Please ensure no one is looking at your screen.\nEnter the phrase exactly as recorded, in the same order.");
-    const word = await Input.prompt({
-      message: `Enter Phrase ${i + 1}`,
-      suggestions: english,
-      minLength: 3,
-    });
-    
-    console.clear();
-    words.push(word);
+    for (let i = 0; i < 12; i++) {
+      pdim("Important: Please ensure no one is looking at your screen.\nEnter the phrase exactly as recorded, in the same order.");
+      const word = await Input.prompt({
+        message: `Enter Phrase ${i + 1}`,
+        suggestions: english,
+        minLength: 3,
+      });
+      
+      console.clear();
+      words.push(word);
+    }
+
+    recoveryPhrase = words.join(" ");
   }
-
-  const mnemonic = words.join(" ");
-  const account = mnemonicToAccount(mnemonic);
+  
+  const account = mnemonicToAccount(recoveryPhrase);
   const privKey = Buffer.from(account.getHdKey().privateKey!).toString("hex");
 
-  await db.push("/account", {
+  const defIndexBackup = await getDefaultAccountIndex();
+
+  const recAccI = await addAccount({
     address: account.address,
     name: "",
     privKey,
   });
+
+  await switchAccount(account.address);
 
   const resp = await sendRequest<{
     owner: {
@@ -45,11 +53,20 @@ async function recoverAccount() {
 
   if (!resp.ok) {
     pwarn("Account recovery failed, no account exists with provided recovery phrase. Please try again.");
-    await db.delete("/account");
+    await removeAccount(account.address);
     return;
   }
 
-  await db.push("/account/name", resp.owner.Name);
+  await db.push(`/accounts[${recAccI}]/name`, resp.owner.Name);
   plog(`Blockchain registration link: ${paint.g.bold.underline(`https://opbnb.bscscan.com/tx/${resp.owner.CreationTx}`)}`);
   plog(`Account ${paint.c.bold(account.address)} recovered successfully.\nWelcome back ${paint.c.bold(resp.owner.Name)}`);
+
+  const wantToSwitch = await Confirm.prompt({
+    message: "Would you like to switch newly recovered account as default account?",
+    default: false,
+  });
+
+  if (!wantToSwitch) {
+    db.push("/defaultAccount", (defIndexBackup === -1) ? 0 : defIndexBackup);
+  }
 }
