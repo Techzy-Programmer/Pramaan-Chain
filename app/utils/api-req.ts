@@ -1,9 +1,10 @@
 import { getAccount } from "./db.js";
+import { perror } from "./paint.js";
 
 const baseUrl = 'https://api.pramaan-chain.tech';
 
 type Resp<T extends Object = {}> = 
-  | { error: string; ok: false }
+  | { error: string; ok: false; fetchError?: boolean }
   | (T & { message: string; body?: ReadableStream; ok: true })
 
 export async function sendRequest<T extends Object = {}>(
@@ -21,16 +22,27 @@ export async function sendRequest<T extends Object = {}>(
   const { signMessage } = await import("../contract/init.js");
   const signature = await signMessage("Authorize Me!");
   const { address } = acc;
+  let res: Response;
 
-  const res = await fetch(`${baseUrl}${path}`, {
-    ...options,
-    
-    headers: {
-      ...options.headers,
-      "X-Signature": signature,
-      "X-Pub-Address": address,
-    },
-  });
+  try {
+    res = await fetch(`${baseUrl}${path}`, {
+      ...options,
+      
+      headers: {
+        ...options.headers,
+        "X-Signature": signature,
+        "X-Pub-Address": address,
+      },
+    });
+  } catch (e) {
+    perror("Network request failed, check your internet connection.");
+
+    return {
+      error: (e as Error).message,
+      fetchError: true,
+      ok: false,
+    };
+  }
 
   if (rawBody && res.ok) {
     return {

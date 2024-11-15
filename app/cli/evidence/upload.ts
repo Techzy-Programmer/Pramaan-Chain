@@ -5,6 +5,7 @@ import { hashFile } from "../../utils/hash.js";
 import { sendRequest } from "../../utils/api-req.js";
 import { plog, pok, pwarn } from "../../utils/paint.js";
 import { delay, gci, handleNExit } from "../../utils/general.js";
+import { fsPicker } from "../../utils/fs-picker.js";
 
 export const uploadCmd = new Command()
   .name("upload").alias("up")
@@ -15,9 +16,8 @@ export const uploadCmd = new Command()
 
 async function uploadEvidence({ filePath, name }: { filePath?: string; name?: string }) {
   if (!filePath) {
-    filePath = await Input.prompt({
-      message: "Enter the file path of the evidence you want to upload",
-      minLength: 3,
+    filePath = await fsPicker({
+      promptMessage: "Select the file you want to upload",
     });
   }
 
@@ -26,11 +26,6 @@ async function uploadEvidence({ filePath, name }: { filePath?: string; name?: st
       message: "Enter a friendly name for your evidence",
       minLength: 1,
     });
-  }
-
-  if (!fs.existsSync(filePath)) {
-    pwarn("File not found at the specified path.");
-    return;
   }
 
   const fileExt = "." + filePath.split(".").pop();

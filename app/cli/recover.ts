@@ -1,9 +1,9 @@
+import { addAccount, db, getDefaultAccountIndex, removeAccount, switchAccount } from "../utils/db.js";
 import { paint, pdim, plog, pwarn } from "../utils/paint.js";
 import { english, mnemonicToAccount } from "viem/accounts";
 import { sendRequest } from "../utils/api-req.js";
-import { Command } from "@cliffy/command";
 import { Confirm, Input } from "@cliffy/prompt";
-import { addAccount, db, getDefaultAccountIndex, removeAccount, switchAccount } from "../utils/db.js";
+import { Command } from "@cliffy/command";
 import { Buffer } from "buffer";
 
 export const recoverCmd = new Command()
@@ -52,8 +52,9 @@ async function recoverAccount({ recoveryPhrase }: { recoveryPhrase?: string }) {
   }>("/owner/retrieve");
 
   if (!resp.ok) {
-    pwarn("Account recovery failed, no account exists with provided recovery phrase. Please try again.");
     await removeAccount(account.address);
+    if (resp.fetchError) return pwarn("Account recovery failed");
+    pwarn("Account recovery failed, no account exists with provided recovery phrase. Please try again.");
     return;
   }
 

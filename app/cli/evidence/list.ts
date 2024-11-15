@@ -1,9 +1,10 @@
+import { Select } from "@cliffy/prompt";
 import { Command } from "@cliffy/command";
-import { Input, Select } from "@cliffy/prompt";
 import { getAccount } from "../../utils/db.js";
-import { paint, pinfo } from "../../utils/paint.js";
+import { paint, pinfo, pok } from "../../utils/paint.js";
 import { downloadEvidence } from "../../utils/evidence-dl.js";
 import { formatBytes, gci, handleNExit } from "../../utils/general.js";
+import { fsPicker } from "../../utils/fs-picker.js";
 
 export const listCmd = new Command()
   .name("list").alias("ls")
@@ -70,15 +71,16 @@ async function listEvidence({ useAccess }: { useAccess?: boolean }) {
     return;
   }
 
-  const selectedEvHash = await renderEvidences(actrl);
-  const dlPth = await Input.prompt({
-    message: "Enter the path to download the evidence",
-    minLength: 3
-  });
+  const { dataHash, name, extension } = await renderEvidences(actrl);
+
+  const dlPth = await fsPicker({
+    promptMessage: "Select a folder to download the evidence to",
+    onlyDirs: true
+  })
 
   console.log("\nDownloading...");
-  await downloadEvidence(actrl.owner, selectedEvHash, dlPth, actrl.sig);
-  console.log("Download complete.");
+  await downloadEvidence(actrl.owner, dataHash, `${dlPth}/${name}${extension}`, actrl.sig);
+  pok("Download complete.");
 }
 
 async function renderEvidences(actrl: ACTRL) {
@@ -91,14 +93,14 @@ async function renderEvidences(actrl: ACTRL) {
   }, i) => {
     return {
       name: `${i + 1}. ${paint.c.bold(name + extension)} (${paint.g(formatBytes(size))}) - ${paint.w.dim(new Date(Number(`${timestamp}000`)).toLocaleString())}`,
-      value: dataHash
+      value: { dataHash, name, extension }
     };
   });
 
-  const selectedHash = await Select.prompt({
+  const selectedEv = await Select.prompt({
     message: "Select an evidence to download",
     options: prompt
   });
 
-  return selectedHash;
+  return selectedEv;
 }

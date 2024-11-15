@@ -2,6 +2,7 @@ import fs from "fs";
 import { Stream } from "stream";
 import { sendRequest } from "./api-req.js";
 import { pipeline } from "stream/promises";
+import { perror } from "./paint.js";
 
 export async function downloadEvidence(pubAddr: string, evHash: string, fullDlPth: string, sig: string = "") {
   const dlResp = await sendRequest(`/evidence/download/${evHash}/${pubAddr}`, {
@@ -9,7 +10,7 @@ export async function downloadEvidence(pubAddr: string, evHash: string, fullDlPt
   }, true);
 
   if (!dlResp.ok || !dlResp.body) {
-    console.log("Error downloading evidence.");
+    perror("Error downloading evidence.");
     return;
   }
 
